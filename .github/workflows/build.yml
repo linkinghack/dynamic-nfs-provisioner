@@ -17,7 +17,7 @@ on:
   create:
   push:
     branches:
-      - 'develop'
+      # - 'develop'
       - 'v*'
     paths-ignore:
       - 'deploy/helm/**'

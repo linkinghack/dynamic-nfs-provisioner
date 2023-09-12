@@ -12,6 +12,12 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 #
+
+FROM golang as builder
+COPY . /code
+RUN cd /code \
+    && bash buildscripts/build.sh
+
 FROM alpine:3.12
 
 RUN apk add --no-cache \
@@ -38,7 +44,7 @@ RUN set -ex && \
     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
 
-COPY provisioner-nfs /
+COPY --from=builder /code/bin/provisioner-nfs /
 
 ARG ARCH
 ARG DBUILD_DATE
