@@ -53,56 +53,56 @@ fi
 
 echo "Building for ${VERSION} VERSION"
 
-# Determine the arch/os combos we're building for
-UNAME=$(uname)
-ARCH=$(uname -m)
-if [ "$UNAME" != "Linux" -a "$UNAME" != "Darwin" ] ; then
-    echo "Sorry, this OS is not supported yet."
-    exit 1
-fi
+# # Determine the arch/os combos we're building for
+# UNAME=$(uname)
+# ARCH=$(uname -m)
+# if [ "$UNAME" != "Linux" -a "$UNAME" != "Darwin" ] ; then
+#     echo "Sorry, this OS is not supported yet."
+#     exit 1
+# fi
 
-if [ "$UNAME" = "Darwin" ] ; then
-  XC_OS="darwin"
-elif [ "$UNAME" = "Linux" ] ; then
-  XC_OS="linux"
-fi
+# if [ "$UNAME" = "Darwin" ] ; then
+#   XC_OS="darwin"
+# elif [ "$UNAME" = "Linux" ] ; then
+#   XC_OS="linux"
+# fi
 
 
-if [ -z "${PNAME}" ];
-then
-    echo "Project name not defined"
-    exit 1
-fi
+# if [ -z "${PNAME}" ];
+# then
+#     echo "Project name not defined"
+#     exit 1
+# fi
 
-if [ -z "${CTLNAME}" ];
-then
-    echo "CTLNAME not defined"
-    exit 1
-fi
+# if [ -z "${CTLNAME}" ];
+# then
+#     echo "CTLNAME not defined"
+#     exit 1
+# fi
 
-# Delete the old dir
-echo "==> Removing old directory..."
-rm -rf bin/${PNAME}/*
-mkdir -p bin/${PNAME}/
+# # Delete the old dir
+# echo "==> Removing old directory..."
+# rm -rf bin/${PNAME}/*
+# mkdir -p bin/${PNAME}/
 
-# If its dev mode, only build for ourself
-if [[ "${DEV}" ]]; then
-    XC_OS=$(go env GOOS)
-    XC_ARCH=$(go env GOARCH)
-fi
+# # If its dev mode, only build for ourself
+# if [[ "${DEV}" ]]; then
+#     XC_OS=$(go env GOOS)
+#     XC_ARCH=$(go env GOARCH)
+# fi
 
 # Build!
 echo "==> Building ${CTLNAME} using $(go version)... "
 
 GOOS="${XC_OS}"
 GOARCH="${XC_ARCH}"
-output_name="bin/${PNAME}/"$GOOS"_"$GOARCH"/"$CTLNAME
+output_name="bin/provisioner-nfs"
 
 if [ $GOOS = "windows" ]; then
     output_name+='.exe'
 fi
 
-env GOOS=$GOOS GOARCH=$GOARCH go build ${BUILD_TAG} -ldflags \
+env go build ${BUILD_TAG} -ldflags \
     "-X github.com/openebs/dynamic-nfs-provisioner/provisioner.NFSServerDefaultImage=${NFSSERVERIMG}
      -X github.com/openebs/maya/pkg/version.GitCommit=${GIT_COMMIT}
      -X github.com/openebs/maya/pkg/version.Version=${VERSION}" \
@@ -111,28 +111,28 @@ env GOOS=$GOOS GOARCH=$GOARCH go build ${BUILD_TAG} -ldflags \
 
 echo ""
 
-# Move all the compiled things to the $GOPATH/bin
-GOPATH=${GOPATH:-$(go env GOPATH)}
-case $(uname) in
-    CYGWIN*)
-        GOPATH="$(cygpath $GOPATH)"
-        ;;
-esac
-OLDIFS=$IFS
-IFS=: MAIN_GOPATH=($GOPATH)
-IFS=$OLDIFS
+# # Move all the compiled things to the $GOPATH/bin
+# GOPATH=${GOPATH:-$(go env GOPATH)}
+# case $(uname) in
+#     CYGWIN*)
+#         GOPATH="$(cygpath $GOPATH)"
+#         ;;
+# esac
+# OLDIFS=$IFS
+# IFS=: MAIN_GOPATH=($GOPATH)
+# IFS=$OLDIFS
 
-# Create the gopath bin if not already available
-mkdir -p ${MAIN_GOPATH}/bin/
+# # Create the gopath bin if not already available
+# mkdir -p ${MAIN_GOPATH}/bin/
 
-# Copy our OS/Arch to the bin/ directory
-DEV_PLATFORM="./bin/${PNAME}/$(go env GOOS)_$(go env GOARCH)"
-for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 2 -type f); do
-    cp ${F} bin/${PNAME}/
-    cp ${F} ${MAIN_GOPATH}/bin/
-done
+# # Copy our OS/Arch to the bin/ directory
+# DEV_PLATFORM="./bin/${PNAME}/$(go env GOOS)_$(go env GOARCH)"
+# for F in $(find ${DEV_PLATFORM} -mindepth 1 -maxdepth 2 -type f); do
+#     cp ${F} bin/${PNAME}/
+#     cp ${F} ${MAIN_GOPATH}/bin/
+# done
 
 # Done!
 echo
 echo "==> Results:"
-ls -hl bin/${PNAME}/
+ls -hl bin/
