@@ -107,7 +107,7 @@ env go build ${BUILD_TAG} -ldflags \
      -X github.com/openebs/maya/pkg/version.GitCommit=${GIT_COMMIT}
      -X github.com/openebs/maya/pkg/version.Version=${VERSION}" \
     -o $output_name\
-    ./cmd/${CTLNAME}
+    ./cmd/provisioner-nfs
 
 echo ""
 
